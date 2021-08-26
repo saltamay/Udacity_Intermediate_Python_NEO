@@ -12,27 +12,61 @@ line, and uses the resulting collections to build an `NEODatabase`.
 
 You'll edit this file in Task 2.
 """
+from typing import List
 import csv
 import json
 
 from models import NearEarthObject, CloseApproach
 
 
-def load_neos(neo_csv_path):
-    """Read near-Earth object information from a CSV file.
+def load_neos(neo_csv_path: str) -> List[NearEarthObject]:
+    f"""Read near-Earth object information from a CSV file.
 
-    :param neo_csv_path: A path to a CSV file containing data about near-Earth objects.
-    :return: A collection of `NearEarthObject`s.
+    Arguments:
+        neo_csv_path {str}: A path to a CSV file containing data about near-Earth objects.
+    
+    Returns: 
+        A collection of `NearEarthObject`s.
     """
     # TODO: Load NEO data from the given CSV file.
-    return ()
+    neo_objects = []
+    with open(neo_csv_path) as neo_input:
+        reader = csv.DictReader(neo_input)
+        for neo_object in reader:
+            designation, name, diameter, hazardous = neo_object['pdes'], neo_object[
+                'name'], neo_object['diameter'], neo_object['pha']
+            if not name:
+                name = None
+            if not diameter:
+                diameter = 'NaN'
+            hazardous = True if hazardous == 'Y' else False
+            neo_objects.append(
+                NearEarthObject(
+                    designation,
+                    name,
+                    float(diameter),
+                    hazardous))
+    return neo_objects
 
 
-def load_approaches(cad_json_path):
+def load_approaches(cad_json_path: str) -> List[CloseApproach]:
     """Read close approach data from a JSON file.
 
-    :param neo_csv_path: A path to a JSON file containing data about close approaches.
-    :return: A collection of `CloseApproach`es.
+    Arguments:
+        neo_csv_path {str}: A path to a JSON file containing data about close approaches.
+
+    Return:
+        A collection of `CloseApproach`es.
     """
-    # TODO: Load close approach data from the given JSON file.
-    return ()
+    cad_objects = []
+    with open(cad_json_path) as cad:
+        json_dict = json.load(cad)
+        for cad in json_dict['data']:
+            designation, time, dist, vel = cad[0], cad[3], cad[4], cad[7]
+            cad_objects.append(
+                CloseApproach(
+                    designation,
+                    time,
+                    float(dist),
+                    float(vel)))
+    return cad_objects
