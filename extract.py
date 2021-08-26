@@ -12,13 +12,14 @@ line, and uses the resulting collections to build an `NEODatabase`.
 
 You'll edit this file in Task 2.
 """
+from typing import List
 import csv
 import json
 
 from models import NearEarthObject, CloseApproach
 
 
-def load_neos(neo_csv_path):
+def load_neos(neo_csv_path: str) -> List[NearEarthObject]:
     f"""Read near-Earth object information from a CSV file.
 
     Arguments:
@@ -48,7 +49,7 @@ def load_neos(neo_csv_path):
     return neo_objects
 
 
-def load_approaches(cad_json_path):
+def load_approaches(cad_json_path: str) -> List[CloseApproach]:
     """Read close approach data from a JSON file.
 
     Arguments:
