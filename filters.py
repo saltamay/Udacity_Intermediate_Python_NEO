@@ -166,7 +166,6 @@ def limit(iterator, n=None):
     return iterator
 
 
-
 class DateFilter(AttributeFilter):
     @classmethod
     def get(cls, approach: CloseApproach) -> str:
