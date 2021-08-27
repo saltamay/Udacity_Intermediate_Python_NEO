@@ -17,6 +17,9 @@ iterator.
 You'll edit this file in Tasks 3a and 3c.
 """
 import operator
+from typing import List
+from itertools import islice
+from models import CloseApproach
 
 
 class UnsupportedCriterionError(NotImplementedError):
@@ -38,18 +41,20 @@ class AttributeFilter:
     Concrete subclasses can override the `get` classmethod to provide custom
     behavior to fetch a desired attribute from the given `CloseApproach`.
     """
-    def __init__(self, op, value):
-        """Construct a new `AttributeFilter` from an binary predicate and a reference value.
+
+    def __init__(self, op: str, value):
+        f"""Construct a new `AttributeFilter` from an binary predicate and a reference value.
 
         The reference value will be supplied as the second (right-hand side)
         argument to the operator function. For example, an `AttributeFilter`
         with `op=operator.le` and `value=10` will, when called on an approach,
         evaluate `some_attribute <= 10`.
 
-        :param op: A 2-argument predicate comparator (such as `operator.le`).
-        :param value: The reference value to compare against.
+        Arguments:
+            op {str}: A 2-argument predicate comparator (such as `operator.le`).
+            value: The reference value to compare against.
         """
-        self.op = op
+        self.op: str = op
         self.value = value
 
     def __call__(self, approach):
@@ -72,11 +77,17 @@ class AttributeFilter:
         return f"{self.__class__.__name__}(op=operator.{self.op.__name__}, value={self.value})"
 
 
-def create_filters(date=None, start_date=None, end_date=None,
-                   distance_min=None, distance_max=None,
-                   velocity_min=None, velocity_max=None,
-                   diameter_min=None, diameter_max=None,
-                   hazardous=None):
+def create_filters(
+        date: str = None,
+        start_date: str = None,
+        end_date: str = None,
+        distance_min: float = None,
+        distance_max: float = None,
+        velocity_min: float = None,
+        velocity_max: float = None,
+        diameter_min: float = None,
+        diameter_max: float = None,
+        hazardous: bool = None) -> List[AttributeFilter]:
     """Create a collection of filters from user-specified criteria.
 
     Each of these arguments is provided by the main module with a value from the
@@ -106,8 +117,39 @@ def create_filters(date=None, start_date=None, end_date=None,
     :param hazardous: Whether the NEO of a matching `CloseApproach` is potentially hazardous.
     :return: A collection of filters for use with `query`.
     """
-    # TODO: Decide how you will represent your filters.
-    return ()
+    filters = []
+
+    if date is not None:
+        filters.append(DateFilter(operator.eq, date))
+
+    if start_date is not None:
+        filters.append(DateFilter(operator.ge, start_date))
+
+    if end_date is not None:
+        filters.append(DateFilter(operator.le, end_date))
+
+    if distance_min is not None:
+        filters.append(DistanceFilter(operator.ge, distance_min))
+
+    if distance_max is not None:
+        filters.append(DistanceFilter(operator.le, distance_max))
+
+    if velocity_min is not None:
+        filters.append(VelocityFilter(operator.ge, velocity_min))
+
+    if velocity_max is not None:
+        filters.append(VelocityFilter(operator.le, velocity_max))
+
+    if diameter_min is not None:
+        filters.append(DiameterFilter(operator.ge, diameter_min))
+
+    if diameter_max is not None:
+        filters.append(DiameterFilter(operator.le, diameter_max))
+
+    if hazardous is not None:
+        filters.append(HazardousFilter(operator.eq, hazardous))
+
+    return filters
 
 
 def limit(iterator, n=None):
@@ -119,5 +161,37 @@ def limit(iterator, n=None):
     :param n: The maximum number of values to produce.
     :yield: The first (at most) `n` values from the iterator.
     """
-    # TODO: Produce at most `n` values from the given iterator.
+    if n:
+        return islice(iterator, n)
     return iterator
+
+
+
+class DateFilter(AttributeFilter):
+    @classmethod
+    def get(cls, approach: CloseApproach) -> str:
+        return approach.time.date()
+
+
+class DistanceFilter(AttributeFilter):
+    @classmethod
+    def get(cls, approach: CloseApproach) -> float:
+        return approach.distance
+
+
+class VelocityFilter(AttributeFilter):
+    @classmethod
+    def get(cls, approach: CloseApproach) -> float:
+        return approach.velocity
+
+
+class DiameterFilter(AttributeFilter):
+    @classmethod
+    def get(cls, approach: CloseApproach) -> float:
+        return approach.neo.diameter
+
+
+class HazardousFilter(AttributeFilter):
+    @classmethod
+    def get(cls, approach: CloseApproach) -> bool:
+        return approach.neo.hazardous

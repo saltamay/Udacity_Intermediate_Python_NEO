@@ -46,18 +46,18 @@ class NEODatabase:
         self._neos = neos
         self._approaches = approaches
 
-        self._neos_to_approaches_map = {}
+        self._data_map = {}
 
         # Link together the NEOs and their close approaches.
         for neo in self._neos:
             designation = neo.designation
-            self._neos_to_approaches_map[designation] = neo
+            self._data_map[designation] = neo
 
         for approach in self._approaches:
             designation = approach.designation
-            if self._neos_to_approaches_map[designation]:
-                approach.neo = self._neos_to_approaches_map[designation]
-                self._neos_to_approaches_map[designation].approaches.append(approach)
+            if self._data_map[designation]:
+                approach.neo = self._data_map[designation]
+                self._data_map[designation].approaches.append(approach)
 
     def get_neo_by_designation(self, designation: str) -> NearEarthObject:
         """Find and return an NEO by its primary designation.
@@ -75,7 +75,11 @@ class NEODatabase:
         Return
             neo {NearEarthObject}: The `NearEarthObject` with the desired primary designation, or `None`.
         """
-        return self._neos_to_approaches_map.get(designation, None)
+        for neo in self._neos:
+            if neo.designation == designation:
+                return neo
+
+        return None
 
     def get_neo_by_name(self, name: str) -> NearEarthObject:
         """Find and return an NEO by its name.
@@ -113,6 +117,10 @@ class NEODatabase:
         :param filters: A collection of filters capturing user-specified criteria.
         :return: A stream of matching `CloseApproach` objects.
         """
-        # TODO: Generate `CloseApproach` objects that match all of the filters.
         for approach in self._approaches:
-            yield approach
+            if filters:
+                for filter in filters:
+                    if filter(approach):
+                        yield approach
+            else:
+                yield approach
