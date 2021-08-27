@@ -57,11 +57,6 @@ class NearEarthObject:
         # Create an empty initial collection of linked approaches.
         self.approaches: List[CloseApproach] = []
 
-    @property
-    def fullname(self):
-        """Return a representation of the full name of this NEO."""
-        return f"{self.designation} ({self.name})"
-
     def __str__(self):
         """Return `str(self)`."""
         return (
@@ -73,6 +68,19 @@ class NearEarthObject:
         return (
             f"NearEarthObject(designation={self.designation!r}, name={self.name!r}, "
             f"diameter={self.diameter:.3f}, hazardous={self.hazardous!r})")
+
+    @property
+    def fullname(self):
+        """Return a representation of the full name of this NEO."""
+        return f"{self.designation} ({self.name})"
+
+    def serialize(self):
+        return {
+            'designation': self.designation,
+            'name': self.name,
+            'diameter_km': self.diameter,
+            'potentially_hazardous': self.hazardous
+        }
 
 
 class CloseApproach:
@@ -145,3 +153,11 @@ class CloseApproach:
     @property
     def designation(self):
         return self._designation
+
+    def serialize(self):
+        return {
+            'datetime_utc': self.time_str,
+            'distance_au': self.distance,
+            'velocity_km_s': self.velocity,
+            'neo': self.neo.serialize()
+        }
