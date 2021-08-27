@@ -62,14 +62,17 @@ class AttributeFilter:
         return self.op(self.get(approach), self.value)
 
     @classmethod
-    def get(cls, approach):
-        """Get an attribute of interest from a close approach.
+    def get(cls, approach: CloseApproach):
+        f"""Get an attribute of interest from a close approach.
 
         Concrete subclasses must override this method to get an attribute of
         interest from the supplied `CloseApproach`.
 
-        :param approach: A `CloseApproach` on which to evaluate this filter.
-        :return: The value of an attribute of interest, comparable to `self.value` via `self.op`.
+        Arguments:
+            approach {CloseApproach}: A `CloseApproach` on which to evaluate this filter.
+
+        Return
+            The value of an attribute of interest, comparable to `self.value` via `self.op`.
         """
         raise UnsupportedCriterionError
 
@@ -88,7 +91,7 @@ def create_filters(
         diameter_min: float = None,
         diameter_max: float = None,
         hazardous: bool = None) -> List[AttributeFilter]:
-    """Create a collection of filters from user-specified criteria.
+    f"""Create a collection of filters from user-specified criteria.
 
     Each of these arguments is provided by the main module with a value from the
     user's options at the command line. Each one corresponds to a different type
@@ -105,17 +108,20 @@ def create_filters(
     because the main module directly passes this result to that method. For now,
     this can be thought of as a collection of `AttributeFilter`s.
 
-    :param date: A `date` on which a matching `CloseApproach` occurs.
-    :param start_date: A `date` on or after which a matching `CloseApproach` occurs.
-    :param end_date: A `date` on or before which a matching `CloseApproach` occurs.
-    :param distance_min: A minimum nominal approach distance for a matching `CloseApproach`.
-    :param distance_max: A maximum nominal approach distance for a matching `CloseApproach`.
-    :param velocity_min: A minimum relative approach velocity for a matching `CloseApproach`.
-    :param velocity_max: A maximum relative approach velocity for a matching `CloseApproach`.
-    :param diameter_min: A minimum diameter of the NEO of a matching `CloseApproach`.
-    :param diameter_max: A maximum diameter of the NEO of a matching `CloseApproach`.
-    :param hazardous: Whether the NEO of a matching `CloseApproach` is potentially hazardous.
-    :return: A collection of filters for use with `query`.
+    Arguments
+        date {str}: A `date` on which a matching `CloseApproach` occurs.
+        start_date {str}: A `date` on or after which a matching `CloseApproach` occurs.
+        end_date {str}: A `date` on or before which a matching `CloseApproach` occurs.
+        distance_min {float}: A minimum nominal approach distance for a matching `CloseApproach`.
+        distance_max {float}: A maximum nominal approach distance for a matching `CloseApproach`.
+        velocity_min {float}: A minimum relative approach velocity for a matching `CloseApproach`.
+        velocity_max {float}: A maximum relative approach velocity for a matching `CloseApproach`.
+        diameter_min {float}: A minimum diameter of the NEO of a matching `CloseApproach`.
+        diameter_max {float}: A maximum diameter of the NEO of a matching `CloseApproach`.
+        hazardous {bool}: Whether the NEO of a matching `CloseApproach` is potentially hazardous.
+
+    Return:
+        A collection of filters for use with `query`.
     """
     filters = []
 
@@ -152,14 +158,17 @@ def create_filters(
     return filters
 
 
-def limit(iterator, n=None):
+def limit(iterator, n: int = None):
     """Produce a limited stream of values from an iterator.
 
     If `n` is 0 or None, don't limit the iterator at all.
 
-    :param iterator: An iterator of values.
-    :param n: The maximum number of values to produce.
-    :yield: The first (at most) `n` values from the iterator.
+    Arguments:
+        iterator: An iterator of values.
+        n: The maximum number of values to produce.
+
+    Return:
+        yield: The first (at most) `n` values from the iterator.
     """
     if n:
         return islice(iterator, n)

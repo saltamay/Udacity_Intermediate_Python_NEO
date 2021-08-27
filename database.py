@@ -13,6 +13,7 @@ You'll edit this file in Tasks 2 and 3.
 """
 from typing import List
 from models import NearEarthObject, CloseApproach
+from filters import AttributeFilter
 
 
 class NEODatabase:
@@ -24,7 +25,10 @@ class NEODatabase:
     querying for close approaches that match criteria.
     """
 
-    def __init__(self, neos: List[NearEarthObject], approaches: List[CloseApproach]):
+    def __init__(
+            self,
+            neos: List[NearEarthObject],
+            approaches: List[CloseApproach]):
         """Create a new `NEODatabase`.
 
         As a precondition, this constructor assumes that the collections of NEOs
@@ -103,7 +107,8 @@ class NEODatabase:
                 return neo
         return None
 
-    def query(self, filters=()):
+    def query(self, filters: List[AttributeFilter]
+              = ()) -> List[CloseApproach]:
         """Query close approaches to generate those that match a collection of filters.
 
         This generates a stream of `CloseApproach` objects that match all of the
@@ -114,14 +119,30 @@ class NEODatabase:
         The `CloseApproach` objects are generated in internal order, which isn't
         guaranteed to be sorted meaninfully, although is often sorted by time.
 
-        :param filters: A collection of filters capturing user-specified criteria.
-        :return: A stream of matching `CloseApproach` objects.
+        Arguments:
+            filters {List[AttributeFilter]}: A collection of filters capturing user-specified criteria.
+
+        Return
+            A stream of matching `CloseApproach` objects.
         """
         for approach in self._approaches:
             if self.filter(approach, filters):
                 yield approach
 
-    def filter(self, approach, filters):
+    def filter(
+            self,
+            approach: CloseApproach,
+            filters: List[AttributeFilter]) -> bool:
+        """Apply filters.
+
+        This return True or False depending if the approach passed all the filters
+
+        Arguments:
+            filters {List[AttributeFilter]}: A collection of filters capturing user-specified criteria.
+            approach {CloseApproach}: A close approac
+        Return
+            True or False
+        """
         for filter in filters:
             if filter(approach) is False:
                 return False

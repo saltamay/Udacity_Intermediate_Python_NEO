@@ -75,6 +75,7 @@ class NearEarthObject:
         return f"{self.designation} ({self.name})"
 
     def serialize(self):
+        """Serialize the NEO object"""
         return {
             'designation': self.designation,
             'name': self.name,
@@ -155,6 +156,7 @@ class CloseApproach:
         return self._designation
 
     def serialize(self):
+        """Serialize the close approach object"""
         return {
             'datetime_utc': self.time_str,
             'distance_au': self.distance,

@@ -24,8 +24,8 @@ def load_neos(neo_csv_path: str) -> List[NearEarthObject]:
 
     Arguments:
         neo_csv_path {str}: A path to a CSV file containing data about near-Earth objects.
-    
-    Returns: 
+
+    Returns:
         A collection of `NearEarthObject`s.
     """
     # TODO: Load NEO data from the given CSV file.
