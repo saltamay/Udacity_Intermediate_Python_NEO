@@ -43,16 +43,15 @@ class AttributeFilter:
     """
 
     def __init__(self, op: str, value):
-        f"""Construct a new `AttributeFilter` from an binary predicate and a reference value.
+        """Construct a new `AttributeFilter` from an binary predicate and a reference value.
 
         The reference value will be supplied as the second (right-hand side)
         argument to the operator function. For example, an `AttributeFilter`
         with `op=operator.le` and `value=10` will, when called on an approach,
         evaluate `some_attribute <= 10`.
 
-        Arguments:
-            op {str}: A 2-argument predicate comparator (such as `operator.le`).
-            value: The reference value to compare against.
+        :param op: A 2-argument predicate comparator (such as `operator.le`).
+        :param value: The reference value to compare against.
         """
         self.op: str = op
         self.value = value
@@ -63,20 +62,18 @@ class AttributeFilter:
 
     @classmethod
     def get(cls, approach: CloseApproach):
-        f"""Get an attribute of interest from a close approach.
+        """Get an attribute of interest from a close approach.
 
         Concrete subclasses must override this method to get an attribute of
         interest from the supplied `CloseApproach`.
 
-        Arguments:
-            approach {CloseApproach}: A `CloseApproach` on which to evaluate this filter.
-
-        Return
-            The value of an attribute of interest, comparable to `self.value` via `self.op`.
+        :param approach: A `CloseApproach` on which to evaluate this filter.
+        :return: The value of an attribute of interest, comparable to `self.value` via `self.op`.
         """
         raise UnsupportedCriterionError
 
     def __repr__(self):
+        """Return `repr(self)`, a computer-readable string representation of this object."""
         return f"{self.__class__.__name__}(op=operator.{self.op.__name__}, value={self.value})"
 
 
@@ -91,7 +88,7 @@ def create_filters(
         diameter_min: float = None,
         diameter_max: float = None,
         hazardous: bool = None) -> List[AttributeFilter]:
-    f"""Create a collection of filters from user-specified criteria.
+    """Create a collection of filters from user-specified criteria.
 
     Each of these arguments is provided by the main module with a value from the
     user's options at the command line. Each one corresponds to a different type
@@ -108,20 +105,17 @@ def create_filters(
     because the main module directly passes this result to that method. For now,
     this can be thought of as a collection of `AttributeFilter`s.
 
-    Arguments
-        date {str}: A `date` on which a matching `CloseApproach` occurs.
-        start_date {str}: A `date` on or after which a matching `CloseApproach` occurs.
-        end_date {str}: A `date` on or before which a matching `CloseApproach` occurs.
-        distance_min {float}: A minimum nominal approach distance for a matching `CloseApproach`.
-        distance_max {float}: A maximum nominal approach distance for a matching `CloseApproach`.
-        velocity_min {float}: A minimum relative approach velocity for a matching `CloseApproach`.
-        velocity_max {float}: A maximum relative approach velocity for a matching `CloseApproach`.
-        diameter_min {float}: A minimum diameter of the NEO of a matching `CloseApproach`.
-        diameter_max {float}: A maximum diameter of the NEO of a matching `CloseApproach`.
-        hazardous {bool}: Whether the NEO of a matching `CloseApproach` is potentially hazardous.
-
-    Return:
-        A collection of filters for use with `query`.
+    :param date: A `date` on which a matching `CloseApproach` occurs.
+    :param start_date: A `date` on or after which a matching `CloseApproach` occurs.
+    :param end_date: A `date` on or before which a matching `CloseApproach` occurs.
+    :param distance_min: A minimum nominal approach distance for a matching `CloseApproach`.
+    :param distance_max: A maximum nominal approach distance for a matching `CloseApproach`.
+    :param velocity_min: A minimum relative approach velocity for a matching `CloseApproach`.
+    :param velocity_max: A maximum relative approach velocity for a matching `CloseApproach`.
+    :param diameter_min: A minimum diameter of the NEO of a matching `CloseApproach`.
+    :param diameter_max: A maximum diameter of the NEO of a matching `CloseApproach`.
+    :param hazardous: Whether the NEO of a matching `CloseApproach` is potentially hazardous.
+    :return: A collection of filters for use with `query`.
     """
     filters = []
 
@@ -163,12 +157,9 @@ def limit(iterator, n: int = None):
 
     If `n` is 0 or None, don't limit the iterator at all.
 
-    Arguments:
-        iterator: An iterator of values.
-        n: The maximum number of values to produce.
-
-    Return:
-        yield: The first (at most) `n` values from the iterator.
+    :param iterator: An iterator of values.
+    :param n: The maximum number of values to produce.
+    :yield: The first (at most) `n` values from the iterator.
     """
     if n:
         return islice(iterator, n)
@@ -176,30 +167,75 @@ def limit(iterator, n: int = None):
 
 
 class DateFilter(AttributeFilter):
+    """A subclass of `AttributeFilter` for filtering by date."""
+
     @classmethod
     def get(cls, approach: CloseApproach) -> str:
+        """Get date attribute a close approach.
+
+        Overrides `get` method of the parent class AttributeFilter.
+        .
+        :param approach: A `CloseApproach` on which to evaluate this filter.
+        :return: The value of an attribute of interest, comparable to `self.value` via `self.op`.
+        """
         return approach.time.date()
 
 
 class DistanceFilter(AttributeFilter):
+    """A subclass of `AttributeFilter` for filtering by distance."""
+
     @classmethod
     def get(cls, approach: CloseApproach) -> float:
+        """Get distance attribute a close approach.
+
+        Overrides `get` method of the parent class AttributeFilter.
+        .
+        :param approach: A `CloseApproach` on which to evaluate this filter.
+        :return: The value of an attribute of interest, comparable to `self.value` via `self.op`.
+        """
         return approach.distance
 
 
 class VelocityFilter(AttributeFilter):
+    """A subclass of `AttributeFilter` for filtering by velocity."""
+
     @classmethod
     def get(cls, approach: CloseApproach) -> float:
+        """Get velocity attribute a close approach.
+
+        Overrides `get` method of the parent class AttributeFilter.
+        .
+        :param approach: A `CloseApproach` on which to evaluate this filter.
+        :return: The value of an attribute of interest, comparable to `self.value` via `self.op`.
+        """
         return approach.velocity
 
 
 class DiameterFilter(AttributeFilter):
+    """A subclass of `AttributeFilter` for filtering by diameter."""
+
     @classmethod
     def get(cls, approach: CloseApproach) -> float:
+        """Get diameter attribute a close approach.
+
+        Overrides `get` method of the parent class AttributeFilter.
+        .
+        :param approach: A `CloseApproach` on which to evaluate this filter.
+        :return: The value of an attribute of interest, comparable to `self.value` via `self.op`.
+        """
         return approach.neo.diameter
 
 
 class HazardousFilter(AttributeFilter):
+    """A subclass of `AttributeFilter` for filtering by hazardous flag."""
+
     @classmethod
     def get(cls, approach: CloseApproach) -> bool:
+        """Get hazardous attribute a close approach.
+
+        Overrides `get` method of the parent class AttributeFilter.
+        .
+        :param approach: A `CloseApproach` on which to evaluate this filter.
+        :return: The value of an attribute of interest, comparable to `self.value` via `self.op`.
+        """
         return approach.neo.hazardous

@@ -14,7 +14,6 @@ A `NearEarthObject` maintains a collection of its close approaches, and a
 The functions that construct these objects use information extracted from the
 data files from NASA, so these objects should be able to handle all of the
 quirks of the data set, such as missing names and unknown diameters.
-
 """
 from typing import List
 from helpers import cd_to_datetime, datetime_to_str
@@ -42,12 +41,11 @@ class NearEarthObject:
             **info):
         """Create a new `NearEarthObject`.
 
-        Arguments:
-            pdes {str} -- The primary designation for this NEO.
-            name {str} --  The IAU name for this NEO.
-            diameter {float} -- The diameter, in kilometers, of this NEO
-            hazardous {bool} -- Whether or not this NEO is potentially hazardous.
-            **info: A dictionary of excess keyword arguments supplied to the constructor.
+        :param pdes: A designation for the NearEarthObject
+        :param name: Name of the NearEarthObject, may be none or empty string
+        :param diameter: Diameter of the NearEarthObject, may be none
+        :param pha: NearEarthObject is hazardous or not
+        :param info: A dictionary of excess keyword arguments supplied to the constructor.
         """
         self.designation = pdes
         self.name = name
@@ -75,7 +73,7 @@ class NearEarthObject:
         return f"{self.designation} ({self.name})"
 
     def serialize(self):
-        """Serialize the NEO object"""
+        """Serialize the NEO object."""
         return {
             'designation': self.designation,
             'name': self.name,
@@ -106,15 +104,13 @@ class CloseApproach:
             velocity: float = float('nan'),
             neo: NearEarthObject = None,
             **info):
-        f"""Create a new `CloseApproach`.
+        """Create a new `CloseApproach`.
 
-        Arguments:
-            pdes {str} -- The primary designation for this NearEarthObject.
-            time {str} -- The date and time, in UTC, at which the NEO passes closest to Earth.
-            distance {float} -- The nominal approach distance of the NEO to Earth at the closest point.
-            velocity {bool} -- The velocity, in km/sec, of the NEO relative to Earth at the closest point.
-            neo {NearEarthObject} -- The NEO that is making a close approach to Earth.
-            **info: A dictionary of excess keyword arguments supplied to the constructor.
+        :param des: A designation for the Object
+        :param cd: Time of close-approach
+        :param dist: Nominal approach distance
+        :param v_rel: Velocity relative to the approach body at close approach (km/s)
+        :param info: A dictionary of excess keyword arguments supplied to the constructor.
         """
         self._designation = pdes
         self.time = cd_to_datetime(time)
@@ -153,10 +149,11 @@ class CloseApproach:
 
     @property
     def designation(self):
+        """Accessor for the `_designation` property."""
         return self._designation
 
     def serialize(self):
-        """Serialize the close approach object"""
+        """Serialize the close approach object."""
         return {
             'datetime_utc': self.time_str,
             'distance_au': self.distance,

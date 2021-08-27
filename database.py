@@ -8,8 +8,6 @@ user-specified criteria.
 Under normal circumstances, the main module creates one NEODatabase from the
 data on NEOs and close approaches extracted by `extract.load_neos` and
 `extract.load_approaches`.
-
-You'll edit this file in Tasks 2 and 3.
 """
 from typing import List
 from models import NearEarthObject, CloseApproach
@@ -43,9 +41,8 @@ class NEODatabase:
         a collection of that NEO's close approaches, and the `.neo` attribute of
         each close approach references the appropriate NEO.
 
-        Arguments:
-            neos {List[NearEarthObject]}: A collection of `NearEarthObject`s.
-            approaches {List[CloseApproach]}: A collection of `CloseApproach`es.
+        :param neos: A collection of `NearEarthObject`s.
+        :param approaches: A collection of `CloseApproach`es.
         """
         self._neos = neos
         self._approaches = approaches
@@ -73,11 +70,8 @@ class NEODatabase:
         The matching is exact - check for spelling and capitalization if no
         match is found.
 
-        Arguments:
-            designation {str}: The primary designation of the NEO to search for.
-
-        Return
-            neo {NearEarthObject}: The `NearEarthObject` with the desired primary designation, or `None`.
+        :param designation: The primary designation of the NEO to search for.
+        :return: The `NearEarthObject` with the desired primary designation, or `None`.
         """
         for neo in self._neos:
             if neo.designation == designation:
@@ -96,11 +90,8 @@ class NEODatabase:
         The matching is exact - check for spelling and capitalization if no
         match is found.
 
-        Arguments:
-            name {str}: The name, as a string, of the NEO to search for.
-
-        Return:
-            neo {NearEarthObject}: The `NearEarthObject` with the desired name, or `None`.
+        :param name: The name, as a string, of the NEO to search for.
+        :return: The `NearEarthObject` with the desired name, or `None`.
         """
         for neo in self._neos:
             if neo.name == name:
@@ -117,13 +108,10 @@ class NEODatabase:
         If no arguments are provided, generate all known close approaches.
 
         The `CloseApproach` objects are generated in internal order, which isn't
-        guaranteed to be sorted meaninfully, although is often sorted by time.
+        guaranteed to be sorted meaningfully, although is often sorted by time.
 
-        Arguments:
-            filters {List[AttributeFilter]}: A collection of filters capturing user-specified criteria.
-
-        Return
-            A stream of matching `CloseApproach` objects.
+        :param filters: A collection of filters capturing user-specified criteria.
+        :return: A stream of matching `CloseApproach` objects.
         """
         for approach in self._approaches:
             if self.filter(approach, filters):
@@ -135,13 +123,12 @@ class NEODatabase:
             filters: List[AttributeFilter]) -> bool:
         """Apply filters.
 
-        This return True or False depending if the approach passed all the filters
+        This return True or False depending if the approach passed
+        all the filters
 
-        Arguments:
-            filters {List[AttributeFilter]}: A collection of filters capturing user-specified criteria.
-            approach {CloseApproach}: A close approac
-        Return
-            True or False
+        :param filters: A collection of filters capturing user-specified criteria.
+        :param approach: A close approach
+        :return: True or False
         """
         for filter in filters:
             if filter(approach) is False:

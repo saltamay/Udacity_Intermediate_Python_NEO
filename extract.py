@@ -9,8 +9,6 @@ formatted as described in the project instructions, into a collection of
 
 The main module calls these functions with the arguments provided at the command
 line, and uses the resulting collections to build an `NEODatabase`.
-
-You'll edit this file in Task 2.
 """
 from typing import List
 import csv
@@ -20,21 +18,18 @@ from models import NearEarthObject, CloseApproach
 
 
 def load_neos(neo_csv_path: str) -> List[NearEarthObject]:
-    f"""Read near-Earth object information from a CSV file.
+    """Read near-Earth object information from a CSV file.
 
-    Arguments:
-        neo_csv_path {str}: A path to a CSV file containing data about near-Earth objects.
-
-    Returns:
-        A collection of `NearEarthObject`s.
+    :param neo_csv_path: A path to a CSV file containing data about near-Earth objects.
+    :return: A list of `NearEarthObject`s.
     """
     # TODO: Load NEO data from the given CSV file.
     neo_objects = []
     with open(neo_csv_path) as neo_input:
         reader = csv.DictReader(neo_input)
         for neo_object in reader:
-            designation, name, diameter, hazardous = neo_object['pdes'], neo_object[
-                'name'], neo_object['diameter'], neo_object['pha']
+            designation, name, diameter, hazardous = neo_object['pdes'],\
+                neo_object['name'], neo_object['diameter'], neo_object['pha']
             if not name:
                 name = None
             if not diameter:
@@ -52,11 +47,8 @@ def load_neos(neo_csv_path: str) -> List[NearEarthObject]:
 def load_approaches(cad_json_path: str) -> List[CloseApproach]:
     """Read close approach data from a JSON file.
 
-    Arguments:
-        neo_csv_path {str}: A path to a JSON file containing data about close approaches.
-
-    Return:
-        A collection of `CloseApproach`es.
+    :param neo_csv_path: A path to a JSON file containing data about close approaches.
+    :return: A collection of `CloseApproach`es.
     """
     cad_objects = []
     with open(cad_json_path) as cad:
